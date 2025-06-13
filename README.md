@@ -1,5 +1,5 @@
 # What is this Repository?
-This repo is to document my attempts and solutuions for each day of the 2024 Advent of code challenge.
+This repo is to document my attempts and solutuions for each day of the 2024 Advent of code challenge as a beginner programmer (1.5 years with python).
 
 
 
