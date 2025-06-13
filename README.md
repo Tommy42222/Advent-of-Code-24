@@ -1,9 +1,9 @@
-# What is this repo?
+# What is this Repository?
 This repo is to document my attempts and solutuions for each day of the 2024 Advent of code challenge.
 
 
 
-# Structure of the repo
+# Structure of the Repository
 - The main Language I am using for this is Python
 - Each days challenge is given its own folder
 - dataX.txt is the input data for that day
