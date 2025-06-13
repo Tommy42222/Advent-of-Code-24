@@ -14,8 +14,7 @@ for match in firstMatches:
 
     pattern1 = re.compile("\d+")
     firstPair = pattern1.search(match)
-
-
+    
 
     pattern2 =re.compile(",\d+")
     secondPair = pattern2.search(match)
