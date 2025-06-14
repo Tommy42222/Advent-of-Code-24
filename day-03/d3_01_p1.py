@@ -13,7 +13,7 @@ def getmul(content):
     firstMatches = pattern.findall(content)
 
     for match in firstMatches:
-        print(match)
+        
 
         pattern1 = re.compile("\d+")
         firstPair = pattern1.search(match)
@@ -26,6 +26,7 @@ def getmul(content):
         secondPair = x[1:]
         multProdoct = int(firstPair.group()) * int(secondPair)
 
+        print(f"{firstPair.group()} * {secondPair} = {int(firstPair.group()) * int(secondPair)}")
         print(f"{finalSum} + {multProdoct} = {finalSum + multProdoct}\n")
         finalSum += multProdoct
     return finalSum
