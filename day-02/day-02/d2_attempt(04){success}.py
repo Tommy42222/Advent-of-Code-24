@@ -38,7 +38,7 @@ def checkDirection(row,direction): #takes in a list of digits and a string, the 
             return False
     
     elif direction == "decsend":
-        if sorted(row,reverse=True) == row: # same logic as acsending, but with the sorted list reversed
+        if sorted(row,reverse=True) == row: # same logic as acsend, but with the sorted list reversed
             return True
         
         else:
