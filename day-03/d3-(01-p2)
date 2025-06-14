@@ -1,5 +1,7 @@
 import re,pprint
-from d3_01_p1 import getmul
+import sys,os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from functions.homeGrownFunctions import getmul
 
 def openFile(fileName):
     with open(f"{fileName}", "r") as file: # opens file
