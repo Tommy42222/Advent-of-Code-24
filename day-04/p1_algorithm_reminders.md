@@ -47,3 +47,8 @@
 - S
 
 ---
+
+## Function Inputs
+- row/x-coord
+- position/y-coord
+- data4.txt as newFile
