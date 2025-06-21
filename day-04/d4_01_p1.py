@@ -6,16 +6,16 @@ from functions.homeGrownFunctions import openFile
 
 def get_Match_coords(content,search_Character): # searches a 2d string array, looks for matching characters, and returns their y,x coords as a 2d array.
 
-    x_Match_list = [] # dict to store all matches and their coordinates
+    match_list = [] # dict to store all matches and their coordinates
     pattern = re.compile(search_Character) 
     matches = pattern.finditer(content) 
 
 
     for match in matches: 
         coordinate = int(match.start()) # get each match's coordinates 
-        x_Match_list.append(coordinate) 
+        match_list.append(coordinate) 
 
-    return(x_Match_list)
+    return(match_list)
 
 
 
@@ -34,9 +34,9 @@ def Search_for_XMAS(x_cord,y_cord,text,target_Characters_list):
 
         # Visual guides to help the human better understand the inputs going into the check_direction function
         print(" ") 
-        print("X =",x_cord,"Y =",y_cord,"--{","X_mult =",x_mult_values[i],"Y_mult =",y_mult_values[i],"}-- Direction =",[direction_values[i]])
+        print("--X =",x_cord,"--Y =",y_cord,"--X_mult =",x_mult_values[i],"--Y_mult =",y_mult_values[i],"--Direction =",[direction_values[i]])
         
-
+        
         number_of_Hits += check_direction(x_cord,y_cord,x_mult_values[i],y_mult_values[i],text,target_Characters_list) # uses the gatherd data to search a given angle from the X for matches
     return number_of_Hits 
 
@@ -96,8 +96,10 @@ for row in range (number0fRows): # for each row in the data, gather the cordinat
 
 number_of_Hits = 0
 
-for row in range(0,number0fRows):                     # for each row of data...
-    print(f"Row__[{row}]_{match_coord_List[row]}")    # prints an overview of that row of coordinates
+
+for row in range(0,number0fRows):  
+                       # for each row of data...
+    print(f"Row__{row}__{match_coord_List[row]}")    # prints an overview of that row of coordinates
     for item in range(0,len(match_coord_List[row])):  # for each coordinate in that row...
     
         x_Location = match_coord_List[row][item]      # gather that coordinate...
