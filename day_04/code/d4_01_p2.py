@@ -93,7 +93,7 @@ def check_direction(x_cord,y_cord,x_mult,y_mult,text,target_Character): #functio
 
 
 here = os.path.dirname(__file__) # gets the absolute file path of the current file 
-with open(f"{here}/../input/data4.txt","r") as file:
+with open(f"{here}/../input/input4.txt","r") as file:
     file = file.read()
     
 newfile = file.splitlines()

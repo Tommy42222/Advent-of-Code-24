@@ -82,7 +82,7 @@ def check_direction(x_cord,y_cord,x_mult,y_mult,text,target_Characters_list): #f
 
 
 
-with open(f"../input/data4.txt", "r") as file: 
+with open(f"../input/input4.txt", "r") as file: 
     file = file.read()
     
 newfile = file.splitlines()
