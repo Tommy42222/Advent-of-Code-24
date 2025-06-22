@@ -92,11 +92,10 @@ def check_direction(x_cord,y_cord,x_mult,y_mult,text,target_Character): #functio
         return 0
 
 
-here = os.path.dirname(__file__)
-
-
-
-
+here = os.path.dirname(__file__) # gets the absolute file path of the current file 
+with open(f"{here}/../input/data4.txt","r") as file:
+    file = file.read()
+    
 newfile = file.splitlines()
 
 # newfile = [i[:10] for i in file.splitlines()[:10]]
@@ -131,6 +130,3 @@ for row in range(0,number0fRows):  # for each row of data...
         # print(f"Current Total = {number_of_Hits}")
 
 print(f"Final Total = {number_of_Hits}")
-
-
-
