@@ -39,7 +39,7 @@ def openFile(fileName):
     
 if __name__ == "__main__":
 
-    content = openFile("../input/data3.txt")
+    content = openFile("../input/input3.txt")
     finalsumm = getmul(content)    
     print(f"FINAL_TOTAL = {finalsumm}\n")
 

@@ -20,5 +20,5 @@ print(pprint.pprint(counter))
 
 for key in counter:
     finalCounter += (int(key) * int(counter[key]))
-
+    print(int(key),"*", int(counter[key]), "=", int(key) * int(counter[key]))
 print(f"\n--=OUTPUT=--\nThe Final Distance = {finalCounter}\n")

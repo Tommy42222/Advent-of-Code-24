@@ -1,7 +1,8 @@
+# This file contains a list of functions that can be imported to other files in the "AOC24" directory.
 import re
 
 
-def getmul(content):
+def getmul(content): # function for day 3, searches input text with regex for "mul(xxx,yyy) mults x*y, then sums and return the results".
 
 
 
@@ -28,7 +29,8 @@ def getmul(content):
         finalSum += multProdoct
     return finalSum
 
-def openFile(fileName):
-    with open(f"{fileName}", "r") as file: # opens file
+def openFile(fileName): # takes in a file name, opens it, and returns the file as a string.
+    with open(f"input/{fileName}.txt", "r") as file: 
         content = file.read()
         return content
+    

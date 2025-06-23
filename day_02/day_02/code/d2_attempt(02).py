@@ -4,7 +4,7 @@ import time
 userInput = input("How many fails are allowed?\n>>> ")
 
 
-with open("../input/data2.txt", "r") as file:  # opens file
+with open("../input/input2.txt", "r") as file:  # opens file
     content = file.read()
 
 

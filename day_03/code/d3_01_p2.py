@@ -1,6 +1,6 @@
 import re,pprint
 import sys,os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from functions.homeGrownFunctions import getmul
 
 def openFile(fileName):
@@ -39,7 +39,7 @@ def get_dont(content,dont_Matches_Dict):
         dont_Matches_Dict[coordinate] = title
 
 
-    # pprint.pprint(dont_Matches_Dict)
+    pprint.pprint(dont_Matches_Dict)
     return(dont_Matches_Dict)
 
 
@@ -92,7 +92,7 @@ def remove_dont_pairs(sorted_dict):
         
 
 
-content = openFile("../input/data3") #open file and parse data3.txt
+content = openFile("../input/input3") #open file and parse data3.txt
 
 matchesDict = get_do(content) # get do()'s
 matchesDict = get_dont(content,matchesDict) #get don't()'s

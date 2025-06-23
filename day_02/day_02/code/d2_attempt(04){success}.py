@@ -73,7 +73,7 @@ def performChecks(newRow): # takes in a list of digits, calls 3 functions, and i
 
 
 
-with open("../input/data2.txt", "r") as file:  # opens the data.txt file
+with open("../input/input2.txt", "r") as file:  # opens the data.txt file
     content = file.read()
 
 formatedList = [] # container for the parsed data

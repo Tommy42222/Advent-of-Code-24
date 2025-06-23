@@ -92,7 +92,7 @@ def secondCheck(row,direction):
 
 
 
-with open("../input/data2.txt", "r") as file:  # opens file
+with open("../input/input2.txt", "r") as file:  # opens file
     content = file.read()
 
 
