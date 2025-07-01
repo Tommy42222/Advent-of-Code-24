@@ -150,33 +150,43 @@ def recheck_pair(iteration,token,x_y_pair,item,compere_token):
 
 def reorder_row(row,x_y_pair):
 
-    print("INPUT =",row)
-    
+    print("INPUT =",row)    
     row_length = len(row)
 
     for iteration in range(row_length): # loop for each index in row
 
-        token = row[iteration]
+
+        
         # print(f" iteration = {iteration} Token = {token}")
         
         while True: # loop until index_N is safe, then loop through index_N+1
+            token = row[iteration]
+            counter = 0
             for item in range(row_length): # loop over each item in list, getting smaller with each "iteration"
+                
                 compere_token = row[item]
                 token_index = row.index(token)
+
+                # print(token,compere_token)
+
                 bool_output = recheck_pair(iteration,token,x_y_pair,item,compere_token)
 
-                if bool_output == False:
 
+                if bool_output == False:
                     # print(f"\nBEFORE {row}")
                     row = swap_list_pair(token_index,item,row)
                     # print(f"AFTER {row}")
-
-
                     continue
-                
 
+                elif bool_output == True or bool_output == None:
+                    counter += 1
+
+            if counter == row_length:
+                break  
+            else:
+                continue
             
-            break
+
     print(f"OUTPUT {row}")
     return row  
 
@@ -239,6 +249,6 @@ for new_row in incorect_list:
     output = get_sotred_row(new_row,x_y_Dict)
 
     value  = int(output[len(output)//2])
-    print(f"MIDDLE = {value}\n-------------------------")
+    print(f"MIDDLE VALUE = {value}\n-------------------------")
     final_count += value
 print(f"FINAL COUNT = {final_count}")
