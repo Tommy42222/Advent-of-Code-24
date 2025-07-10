@@ -31,12 +31,11 @@ right = data["right"]
 totalDistance = []
 
 
-
-
-
 for item in range(len(left)):
     totalDistance.append(abs(int(left[item]) - int(right[item])))
-    print(f"Row -{item}- {left[item]} - {right[item]} = {totalDistance[item]}")
+    print(f"Row_{item}| {left[item]} - {right[item]} = {totalDistance[item]}")
+
+
 finalSum = sum(totalDistance)
 
 print(f"Final_Total_Distance_is_{finalSum}")

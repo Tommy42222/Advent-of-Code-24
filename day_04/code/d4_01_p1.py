@@ -33,8 +33,8 @@ def Search_for_XMAS(x_cord,y_cord,text,target_Characters_list):
 
 
         # Visual guides to help the human better understand the inputs going into the check_direction function
-        print(" ") 
-        print("--X =",x_cord,"--Y =",y_cord,"--X_mult =",x_mult_values[i],"--Y_mult =",y_mult_values[i],"--Direction =",[direction_values[i]])
+        # print(" ") 
+        # print("--X =",x_cord,"--Y =",y_cord,"--X_mult =",x_mult_values[i],"--Y_mult =",y_mult_values[i],"--Direction =",[direction_values[i]])
         
         
         number_of_Hits += check_direction(x_cord,y_cord,x_mult_values[i],y_mult_values[i],text,target_Characters_list) # uses the gatherd data to search a given angle from the X for matches

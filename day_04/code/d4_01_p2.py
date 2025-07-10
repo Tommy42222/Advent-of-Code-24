@@ -100,9 +100,6 @@ newfile = file.splitlines()
 
 # newfile = [i[:10] for i in file.splitlines()[:10]]
 
-
-
-
 number0fRows = file.count("\n") 
 number0fRows = len(newfile)
 # print(f"NUMBER OF ROWS = {number0fRows}")
