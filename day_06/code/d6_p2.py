@@ -1,5 +1,5 @@
-import os
-
+import os,re,pprint
+from collections import Counter
 
 
 def parse_input(input_file): # returns the grid as a  2d list with each characters as an item in the list
@@ -39,7 +39,7 @@ def turn_90_deg_right(turn_count,direction_list):
     turn_count += 1
     new_facing_direction = direction_list[turn_count % 4]
     
-    print(f"Turning to face {new_facing_direction}, count = {turn_count}\n")
+
     return new_facing_direction, turn_count
 
 
@@ -53,7 +53,7 @@ def move_one_step_forward(x_cord,y_cord,x_cord_change,y_cord_change): # moves th
 
 
 def set_current_square_to_X(grid,x_cord,y_cord):
-    grid[y_cord][x_cord] = "?"
+    grid[y_cord][x_cord] = "@"
     return grid
 
 
@@ -63,7 +63,7 @@ def check_next_square(grid,x_cord_change,y_cord_change,start_x_cord,start_y_cord
     new_y_cord = start_y_cord + y_cord_change[0]
 
     if new_x_cord < 0 or new_y_cord < 0:
-        print("LESS THEN 0")
+        print("GUARD LEFT THE AERA")
         return -1
     try:
         
@@ -97,13 +97,18 @@ def main(input_grid,starting_info,movement_directions,movement_directions_list):
     # maps guard token to direction (up,down,left,right)
     current_facing_direction = movement_directions_list[turn_count % 4]
     
+           
+    turn_tracker_list = []  # adds and stores the coordinates of the guard each time their turn, if duplecate coords are detected, then a loop is found
+    turn_tracker_buffer = [] # max len of 2, when len = 2: check if they are the same| if yes add that coord only once to ttl and empty buffer| otherwise pop item[0] to ttl and repeat
+        
 
     while True: # loops until the guard looks off the grid, then it returns the final grid 
 
         # values added to the x and y cords to move the guard in their current facing direction 
         x_coord_direction_change = movement_directions[current_facing_direction][1]
         y_coord_direction_change = movement_directions[current_facing_direction][0]
-        
+
+
         # checks if the next square is empty, a box, or the egde of the grid (returns Ture or False or 0)
         bool_output = check_next_square(main_grid,x_coord_direction_change,y_coord_direction_change,x_coord,y_coord)
         
@@ -111,26 +116,113 @@ def main(input_grid,starting_info,movement_directions,movement_directions_list):
         set_current_square_to_X(main_grid,x_coord,y_coord)
 
 
+
         if bool_output == -1: # if out of grid bounds: return grid and terminate "main"
-            print("out of bounds")
             return main_grid
         
 
         elif bool_output == False: # if box: turn 90deg right
-            print(f"HIT A BOX \nTotal unique moves = {sum(X.count('?') for X in main_grid)}")
 
             current_facing_direction,turn_count = turn_90_deg_right(turn_count,movement_directions_list)
+            turn_coordinates = f"{y_coord}:{x_coord}"
+            
+            print(f"Turning to face {current_facing_direction}, count = {turn_count}, coords = {turn_coordinates}")
+
+            turn_tracker_buffer,buffer_output = prosses_buffer(turn_tracker_buffer,turn_coordinates)
+            
+            if buffer_output == None:
+                continue
+
+            turn_tracker_list.append(buffer_output)
+
+            bool_check_loop = check_for_loop(turn_tracker_list)
+            
+            if bool_check_loop == True:
+
+                print("LOOP FOUND")
+                return True
+            
+
+            # print(f"HIT A BOX \nTotal unique moves = {sum(X.count('?') for X in main_grid)}")
+            
             continue
 
         elif bool_output == True: # if empty: move one step fowrard
-            print(f"Moving >>> {current_facing_direction}")
+            # print(f"Moving >>> {current_facing_direction}")
 
             x_coord,y_coord = move_one_step_forward(x_coord,y_coord,x_coord_direction_change,y_coord_direction_change)
             continue
 
+#----------------------------------------------------------------------------------------
+
+def prosses_buffer(buffer,input_coord):
+    
+    if len(buffer) == 2:
+        first = buffer[0]
+        second = buffer[1]
+
+        if first == second: # if matching pair, return one of the pair and clear buffer
+            output_value = first
+            buffer.clear()
+            buffer.append(input_coord)
+
+        else:
+            output_value = first # if no match, pop and return the [0] value
+            buffer.pop(0)
+            buffer.append(input_coord)
 
 
-""" ORDER OF OPERATIONS FOR GUARD ALGORITHOM
+    else:
+        buffer.append(input_coord) # if len 
+        output_value = None
+
+    return buffer,output_value
+
+
+
+def check_for_loop(input_list):
+    item_counter = Counter(input_list).items()
+    
+
+    for coordinate in item_counter:
+        if coordinate[1] >= 2:
+            print(item_counter)
+            print(coordinate)
+            return True
+    
+    return False
+    
+
+
+
+
+def get_Match_coords(content,search_Character): # searches a 2d string array, looks for matching characters, and returns their y,x coords as a 2d array.
+
+    match_list = [] # dict to store all matches and their coordinates
+    pattern = re.compile(f"\?") 
+    matches = pattern.finditer(content) 
+
+
+    for match in matches: 
+        coordinate = int(match.start()) # get each match's coordinates 
+        match_list.append(coordinate) 
+
+    # print(match_list)
+    return(match_list)
+
+
+def place_box_in_guard_path(grid,location):
+    original_grid = grid
+
+    temp_grid = original_grid[:]
+    temp_grid = temp_grid[:location] + "#" + temp_grid[location + 1:]
+
+    print(temp_grid)
+    return temp_grid
+
+
+
+""" ORDER OF OPERATIONS FOR GUARD MOVMENT ALGORITHOM
 1: get the guards current x and y cords
 2: get current facing direction or CFD
 
@@ -147,26 +239,37 @@ if __name__ == "__main__":
     here = os.path.dirname(__file__)
     with open(f"{here}/../input/sample6_p2.txt","r") as file:
         content = file.read()
-
-
+    
     facing_directions_list = ["up","right","down","left"]
     movement_directions_dict = {"up":[[-1],[0]],"down":[[1],[0]],"left":[[0],[-1]],"right":[[0],[1]]} # dict format = "Direction": [Y_change][X_change]
+    
+    loop_counter = 0
+
+    guard_path_coords = get_Match_coords(content,"?")
+    i = 0
+    for location in guard_path_coords:
+        i += 1
+        itterated_content = place_box_in_guard_path(content,location)
 
 
-    grid = parse_input(content)
-    starting_info = get_guard_starting_location(grid)
 
-    final_output_grid = main(grid,starting_info,movement_directions_dict,facing_directions_list)
+        grid = parse_input(itterated_content)
+        starting_info = get_guard_starting_location(grid)
 
-
-    text = "FINAL OUTPUT"
-    print(text.center(130,"="))
-
-    for row in grid: # prints the final grid row by row
-        print("".join(row))
-
-    print(text.center(130,"="))
-    print(sum(X.count("?") for X in final_output_grid)) # counts the number of "?" on the grid to dertermin final count of uniqce grids quares travaled by the guard
+ 
 
 
-    new_output_grid = place_guard_back_on_grid(final_output_grid)
+        final_output_count = main(grid,starting_info,movement_directions_dict,facing_directions_list)
+
+        if final_output_count == True:
+            loop_counter += 1
+            continue
+
+        pprint.pprint(final_output_count)
+        print(sum(X.count("@") for X in final_output_count))
+        print(f"---------------------------------* {i}")
+
+print(F"FINAL NUMBER OF LOOPS FOUND = {loop_counter}")
+
+
+
