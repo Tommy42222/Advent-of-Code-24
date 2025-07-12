@@ -6,14 +6,13 @@ def parse_input(input_file): # returns the grid as a  2d list with each characte
     return [list(line) for line in input_file.splitlines()]
 
 
-def place_guard_back_on_grid(grid):
+def place_guard_back_on_grid(grid): # places the guards back on the grid after part 1
     start_x_cord = starting_info[1]
     start_y_cord = starting_info[2]
     grid[start_y_cord][start_x_cord] = "^"
     return grid
 
-def write_grid_to_txt(grid):
-
+def write_grid_to_txt(grid): # used to create grid for part 2
     part_2_grid = "\n".join("".join(map(str, row)) for row in grid)
     with open(f"../input/sample6_p2.txt","w") as file:
         file.write(part_2_grid)
@@ -63,7 +62,7 @@ def check_next_square(grid,x_cord_change,y_cord_change,start_x_cord,start_y_cord
     new_y_cord = start_y_cord + y_cord_change[0]
 
     if new_x_cord < 0 or new_y_cord < 0:
-        print("GUARD LEFT THE AERA")
+        print("WOULD LOOP AROUND...")
         return -1
     try:
         
@@ -77,6 +76,7 @@ def check_next_square(grid,x_cord_change,y_cord_change,start_x_cord,start_y_cord
         
     except: 
         IndexError
+        print("OUT OF INDEX RANGE")
         return -1
 
 
@@ -118,34 +118,32 @@ def main(input_grid,starting_info,movement_directions,movement_directions_list):
 
 
         if bool_output == -1: # if out of grid bounds: return grid and terminate "main"
+            # print("out of bounds")
             return main_grid
         
 
-        elif bool_output == False: # if box: turn 90deg right
+        elif bool_output == False: # if box: turn 90deg right, and run the code for part 2
 
             current_facing_direction,turn_count = turn_90_deg_right(turn_count,movement_directions_list)
+            
             turn_coordinates = f"{y_coord}:{x_coord}"
             
-            print(f"Turning to face {current_facing_direction}, count = {turn_count}, coords = {turn_coordinates}")
+            # print(f"Turning to face {current_facing_direction}, count = {turn_count}, coords = {turn_coordinates}")
 
             turn_tracker_buffer,buffer_output = prosses_buffer(turn_tracker_buffer,turn_coordinates)
             
-            if buffer_output == None:
+            if buffer_output == None: # don't check for loop if buffer returns no value
                 continue
 
             turn_tracker_list.append(buffer_output)
-
             bool_check_loop = check_for_loop(turn_tracker_list)
             
             if bool_check_loop == True:
-
                 print("LOOP FOUND")
                 return True
             
 
-            # print(f"HIT A BOX \nTotal unique moves = {sum(X.count('?') for X in main_grid)}")
             
-            continue
 
         elif bool_output == True: # if empty: move one step fowrard
             # print(f"Moving >>> {current_facing_direction}")
@@ -155,13 +153,13 @@ def main(input_grid,starting_info,movement_directions,movement_directions_list):
 
 #----------------------------------------------------------------------------------------
 
-def prosses_buffer(buffer,input_coord):
-    
-    if len(buffer) == 2:
+def prosses_buffer(buffer,input_coord): 
+
+    if len(buffer) == 2: # if the buffer is full
         first = buffer[0]
         second = buffer[1]
 
-        if first == second: # if matching pair, return one of the pair and clear buffer
+        if first == second: # if matching pair, return the [0] value and clear buffer
             output_value = first
             buffer.clear()
             buffer.append(input_coord)
@@ -171,21 +169,20 @@ def prosses_buffer(buffer,input_coord):
             buffer.pop(0)
             buffer.append(input_coord)
 
-
     else:
-        buffer.append(input_coord) # if len 
+        buffer.append(input_coord) # if the buffer is not full, return None
         output_value = None
 
-    return buffer,output_value
+    return buffer,output_value 
 
 
 
-def check_for_loop(input_list):
+def check_for_loop(input_list): # this list stores all the cooridinates of each turn the guard makes, if any duplicates are found, then the guard is stuck in a loop. 
     item_counter = Counter(input_list).items()
     
-
     for coordinate in item_counter:
         if coordinate[1] >= 2:
+            
             print(item_counter)
             print(coordinate)
             return True
@@ -217,7 +214,7 @@ def place_box_in_guard_path(grid,location):
     temp_grid = original_grid[:]
     temp_grid = temp_grid[:location] + "#" + temp_grid[location + 1:]
 
-    print(temp_grid)
+    # print(temp_grid)
     return temp_grid
 
 
@@ -237,7 +234,7 @@ def place_box_in_guard_path(grid,location):
 if __name__ == "__main__":
 
     here = os.path.dirname(__file__)
-    with open(f"{here}/../input/sample6_p2.txt","r") as file:
+    with open(f"{here}/../input/input6_p2.txt","r") as file:
         content = file.read()
     
     facing_directions_list = ["up","right","down","left"]
@@ -246,6 +243,7 @@ if __name__ == "__main__":
     loop_counter = 0
 
     guard_path_coords = get_Match_coords(content,"?")
+
     i = 0
     for location in guard_path_coords:
         i += 1
@@ -261,13 +259,13 @@ if __name__ == "__main__":
 
         final_output_count = main(grid,starting_info,movement_directions_dict,facing_directions_list)
 
+        print(f"---------------------------------* location No.{i}")
         if final_output_count == True:
             loop_counter += 1
             continue
 
-        pprint.pprint(final_output_count)
-        print(sum(X.count("@") for X in final_output_count))
-        print(f"---------------------------------* {i}")
+        # pprint.pprint(final_output_count)
+        # print(sum(X.count("@") for X in final_output_count))
 
 print(F"FINAL NUMBER OF LOOPS FOUND = {loop_counter}")
 
