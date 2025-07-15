@@ -6,7 +6,7 @@ This repo is to document my attempts and solutuions for each day of the 2024 Adv
 # Structure of the Repository
 - The main Language I am using for this is Python
 - Each days challenge is given its own folder
-- most days will be split into parts p1 and p2, but not always
+- Most days will be split into parts p1 and p2, but not always
 - I will *try* to include comments in all my solutions for improved readability
 
 
