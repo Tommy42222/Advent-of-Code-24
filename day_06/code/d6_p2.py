@@ -1,4 +1,4 @@
-import os,re,pprint
+import os,re,pprint,time
 from collections import Counter
 
 
@@ -233,6 +233,8 @@ def place_box_in_guard_path(grid,location):
 
 if __name__ == "__main__":
 
+    start = time.time()
+
     here = os.path.dirname(__file__)
     with open(f"{here}/../input/input6_p2.txt","r") as file:
         content = file.read()
@@ -268,6 +270,8 @@ if __name__ == "__main__":
         # print(sum(X.count("@") for X in final_output_count))
 
 print(F"FINAL NUMBER OF LOOPS FOUND = {loop_counter}")
+end = time.time()
 
+print(f"PROGRAM TOTAL RUN TIME ={end - start:.2f}s")
 
 
