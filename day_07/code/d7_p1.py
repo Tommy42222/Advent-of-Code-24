@@ -1,4 +1,4 @@
-import os,pprint
+import os
 
 
 def parse_input_file(file):
@@ -7,8 +7,10 @@ def parse_input_file(file):
 
     for row in split_file:
         values = row.split(":")
+
         target, equation_values = int(values[0]), [int(item) for item in values[1].split()]
         master_dict[target] = equation_values
+        
         print(target,equation_values)
 
     return master_dict
@@ -36,6 +38,8 @@ def main(content):
 
 def can_make_target(current_sum,target,values_list,index,symbol):
     # print(symbol)
+    global iteration_counter
+    iteration_counter += 1
     if index == len(values_list):
         if current_sum == target:
             print("MATCH",current_sum)
@@ -50,15 +54,15 @@ def can_make_target(current_sum,target,values_list,index,symbol):
 
 
 
-
 if __name__ == "__main__":
+    iteration_counter = 0
 
     here = os.path.dirname(__file__)
     with open (f"{here}/../input/input7.txt", "r") as file:
         content = file.read()
 
     input_values = parse_input_file(content)
-
     final_count = main(input_values)
 
-    print(final_count)
+    print(f"-------------------------------*\nFINAL SUM = {final_count:,}")
+    print(f"TOTAL ITERATIONS = {iteration_counter:,}")
