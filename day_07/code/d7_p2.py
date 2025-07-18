@@ -35,6 +35,8 @@ def main(content):
         
 
 def can_make_target(current_sum,target,values_list,index,symbol):
+    current_sum = int(current_sum)
+
     # print(symbol)
     if index == len(values_list):
         if current_sum == target:
@@ -46,7 +48,8 @@ def can_make_target(current_sum,target,values_list,index,symbol):
     else:
         
         return (can_make_target(current_sum + values_list[index],target,values_list,index + 1,symbol=f"+ {current_sum, values_list[index]}") 
-                or can_make_target(current_sum * values_list[index],target,values_list,index + 1,symbol=f"* {current_sum, values_list[index]}"))
+                or can_make_target(current_sum * values_list[index],target,values_list,index + 1,symbol=f"* {current_sum, values_list[index]}")
+                or can_make_target(str(current_sum) + str(values_list[index]), target,values_list,index + 1, symbol= f"|| {str(current_sum) + str(values_list[index])}"))
 
 
 
