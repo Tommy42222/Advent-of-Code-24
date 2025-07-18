@@ -1,4 +1,4 @@
-import os,pprint
+import os
 
 
 def parse_input_file(file):
@@ -22,25 +22,28 @@ def main(content):
         current_sum = values[0]
         loop_index = 1
 
-        print("--------------------------------")
-        print(current_sum,target,values)
+        # print("--------------------------------")
+        # print(current_sum,target,values)
 
         if can_make_target(current_sum,target,values,loop_index,symbol="start") == True:
             final_counter += target
         else:
-            print("NO MATCHS")
+            print("NO MATCHS", f"{target:,}")
     
     return final_counter
+
 
         
 
 def can_make_target(current_sum,target,values_list,index,symbol):
+    global iteration_count
+    iteration_count += 1
     current_sum = int(current_sum)
 
     # print(symbol)
     if index == len(values_list):
         if current_sum == target:
-            print("MATCH",current_sum)
+            print("MATCH",f"{current_sum:,}")
             return True
         else:
             # print("going backwards",current_sum)
@@ -55,7 +58,7 @@ def can_make_target(current_sum,target,values_list,index,symbol):
 
 
 if __name__ == "__main__":
-
+    iteration_count = 0
     here = os.path.dirname(__file__)
     with open (f"{here}/../input/input7.txt", "r") as file:
         content = file.read()
@@ -64,4 +67,5 @@ if __name__ == "__main__":
 
     final_count = main(input_values)
 
-    print(final_count)
+    print(f"-------------------------------*\n{final_count:,}")
+    print(f"TOTAL ITERATIONS = {iteration_count:,}")
