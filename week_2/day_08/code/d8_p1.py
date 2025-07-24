@@ -54,32 +54,30 @@ def check_for_anti_node(next_item,differnces,grid,antenna_frequency):
     new_y_cord = next_item[0] + differnces[0]
     new_x_cord = next_item[1] + differnces[1]
 
+    output_message = "out of bounds"
+    # print(f"NEXT ITEM = {next_item}, DIFF = {differnces}, NEW_CORDS = {new_y_cord}:{new_x_cord}, FREQUANCY = {antenna_frequency}, NEW SPOT = {place_on_grid}")
+
     if new_x_cord < 0 or new_y_cord < 0:
-        print(f"less then 0", end=", ")
+        output_message = "less then 0"
 
     else:
         try:
             place_on_grid = map_grid[new_y_cord][new_x_cord]
 
             if place_on_grid == "$":
-                print("already taken", end=", ")
-            # print(f"NEXT ITEM = {next_item}, DIFF = {differnces}, NEW_CORDS = {new_y_cord}:{new_x_cord}, FREQUANCY = {antenna_frequency}, NEW SPOT = {place_on_grid}")
+                output_message == "space already taken"
 
             else:
-                print("hit", end=", ")
+                output_message == "hit"
                 total_antinode_couter += 1
                 map_grid[new_y_cord][new_x_cord] = "$"
                 
 
         except IndexError:
-            print(f"out of bounds", end=", ")
+            pass
 
-    print(f"INDEX = {new_y_cord}:{new_x_cord}")
+    print(f"{output_message:<13} | {new_y_cord}:{new_x_cord}")
     return map_grid
-
-
-
-
 
 
 
@@ -97,9 +95,8 @@ def iterate_over_antenna_signal(coordinates,grid,singal):
             differences = get_coordinate_differnce(item,next_item)
             grid = check_for_anti_node(next_item,differences,grid,singal)
 
-        # print("\n")
-    # pprint.pprint(grid)
 
+    return grid
 
 
 
@@ -111,9 +108,10 @@ def main(content):
     for signal,coordinates in antennas_coordinates_dict.items():
 
             print(signal)
-            iterate_over_antenna_signal(coordinates,parsed_content,signal)
-            print("-------")
+            grid = iterate_over_antenna_signal(coordinates,parsed_content,signal)
+            print("----------------------")
 
+    
 
 
 
