@@ -34,3 +34,5 @@ def openFile(fileName): # takes in a file name, opens it, and returns the file a
         content = file.read()
         return content
     
+def output_2d_list_as_string(grid,seperator):
+    print('\n'.join(map(seperator.join, grid)))
