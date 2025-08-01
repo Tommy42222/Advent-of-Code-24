@@ -60,7 +60,7 @@ def reorder_disk_map(disk_map:list) -> list:
     
 
 
-def calculate_check_sum(disk_map:list) -> None:
+def calculate_check_sum(disk_map:list) -> int:
     total_check_sum = 0
     for index, item in enumerate(disk_map):
         total_check_sum += index * item
