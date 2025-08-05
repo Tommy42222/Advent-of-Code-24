@@ -17,11 +17,22 @@ def find_all_starting_locs(grid: list[str]):  # this returns a list of coordinat
     return starting_locations
 
 
-def check_neighbours(
+"""
+This function checks the horizontally & vertically adjacent squares around the current_location
+for valid paths, then appends then to the top of the "to_visit" stack.
+
+A path is valid only if"
+    - its height value is 1 greater the current_location
+    - it is a path that has not already been visited before
+
+Any path that fails to meet these 2 rules are not appended
+"""
+def check_neighbours( 
     current_location: tuple[int, int],
     to_vist_stack: set[tuple[int, int]],
     visted: list[tuple[int, int]],
     grid: list[str]) -> set:
+
     # print("---")
     y_cord = current_location[0]
     x_cord = current_location[1]
@@ -102,7 +113,7 @@ def main() -> None:
 if "__main__" == __name__:
 
     here = os.path.dirname(__file__)
-    with open(f"{here}/../input/sample10.txt", "r") as file:
+    with open(f"{here}/../input/input10.txt", "r") as file:
         content = file.read()
 
     main()
