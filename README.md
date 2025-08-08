@@ -1,11 +1,11 @@
 # What is this Repository?
-This repo is to document my attempts and solutuions for each day of the 2024 Advent of code challenge as a beginner programmer (1.5 years with python) who is taking on Advent of Code for the first timegit push origin -d.
+This repo is to document my attempts and solutuions for each day of the 2024 Advent of code challenge as a beginner programmer (1.5 years with python) who is taking on Advent of Code for the first time.
 
 
 
 # Structure of the Repository
-- The main Language I am using for this is Python
-- Each days challenge is given its own folder
+- The Language I am using for this challenge is Python
+- Each day will be given its own folder
 - Most days will be split into parts p1 and p2, but not always
 - I will *try* to include comments in all my solutions for improved readability
 
