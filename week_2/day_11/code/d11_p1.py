@@ -50,6 +50,8 @@ def main() -> None:
 
     stones = Make_List_Of_Stones(parse_input(content),25)
 
+    print(f"input = {stones.stones}")
+
     for i in range(0,stones.iteration_count):
         stones.set_index_to_0()
         t1 = time.time()
@@ -73,8 +75,12 @@ def main() -> None:
             stones.index += 1
 
         
-        # print(stones.stones,"\n")
-    print(f"final number of stones after {stones.iteration_count} blinks = {len(stones.stones)}")
+        
+        print(f"blinks = {i + 1} total count = {len(stones.stones)}")
+        a = [i for i in stones.stones if len(str(i)) == 1 ]
+        print(len(a),"singles digits",end=" - ")
+        print(f"{len(a)/len(stones.stones) * 100:.2f}%\n")
+        print(stones.stones)
 #-------------------
 
 a = time.time()

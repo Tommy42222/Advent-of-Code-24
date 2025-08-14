@@ -1,86 +1,75 @@
 import os,time
+from collections import defaultdict
+from decimal import Decimal
+
+def parse_input(input_str:str) -> list[str]:
+    return [number for number in input_str.strip("\n").split()]
 
 
-def parse_input(input_str:str) -> list[int]:
-    return [int(number) for number in input_str.split(" ")]
+def strip_leading_0s(input:str) -> str:
+    value = input.lstrip("0")
+
+    if value == "":
+        value = "0"
+
+    return value
 
 
-class Make_List_Of_Stones:
-    def __init__(self,stones,iteration_count) -> None:
-        self.stones = stones
-        self.iteration_count = iteration_count
-        self.index = 0
+def perform_operation(item:str) -> list[str]:
 
-    def set_index_to_0(self):
-        self.index = 0
+    if item == "0":
+        return ["1"]
+        
+    elif len(str(item)) % 2 == 0:
+        half_item_length = len(str(item)) // 2
+        return [item[0:half_item_length], strip_leading_0s(item[half_item_length:])]
+        
+    else:
+        return [str(int(item) * 2024)]
+        
 
-    def mult_by_2024(self,item_index:int) -> None:
-        self.stones[item_index] = int(self.stones[item_index]) * 2024
-     
+def blink(_input:dict,num_blinks:int):
 
-    def change_to_1(self,item_index:int) -> None:
-        self.stones[item_index] = 1
+    if num_blinks == 0:
+        return _input
 
+    dd = defaultdict(int)
 
-    def split_in_half(self,item_index:int) -> None:
-
-        token = str(self.stones[item_index])
-        token_length = len(token)
-
-        left_half = int(token[0:token_length//2])
-        right_half = int(token[token_length//2:])
-
-        # right_half = right_half.lstrip("0")
-
-        # if right_half == "":
-        #     right_half = 0
-
+    for item, count in _input.items():
+        for return_value in perform_operation(item=item):
+            dd[return_value] += count
     
-        self.stones[item_index] = left_half
-        self.stones.insert(item_index +1,right_half)
-
-        self.index += 1
+    # print(dd)
+    return blink(dd,num_blinks=num_blinks-1)
 
 
 def main() -> None:
 
     here = os.path.dirname(__file__)
-    with open(f"{here}/../input/sample11.txt", "r") as file:
+    with open(f"{here}/../input/input11.txt", "r") as file:
         content = file.read()
+    
+    content:list[str] = parse_input(content)
 
-    stones = Make_List_Of_Stones(parse_input(content),10)
+    dd_input = defaultdict(int)
+    for i in content:
+        dd_input[i] += 1
 
-    print(f"input = {stones.stones}")
 
-    for i in range(0,stones.iteration_count):
-        stones.set_index_to_0()
-        t1 = time.time()
-        while True:
+    stone_count = blink(dd_input,900)
 
-            if stones.index == len(stones.stones):
-                print(f"after {i + 1} blinks",end=" ")
-                t2 = time.time()
-                print(f" time to calculate blink = {t2 - t1:.2f}s")
-                break
-            
-            if stones.stones[stones.index] == 0:
-                stones.change_to_1(stones.index)
+    sum = 0
+    for item,freq in stone_count.items():
+        sum += freq
+        print(f"{item}, {freq:.5e}")
 
-            elif len(str(stones.stones[stones.index])) % 2 == 0:
-                stones.split_in_half(stones.index)            
 
-            else:
-                stones.mult_by_2024(stones.index)
-                    
-            stones.index += 1
+    print(f"\nfinal stone count = {sum:.5e}")
+    print(f"number of unique items = {len(stone_count)}")
 
-        
-        
-        print(f"blinks = {i + 1} total count = {len(stones.stones)}")
-        a = [i for i in stones.stones if len(str(i)) == 1 ]
-        print(len(a),"singles digits",end=" - ")
-        print(f"{len(a)/len(stones.stones) * 100:.2f}%\n")
-        print(stones.stones)
+
+    
+
 #-------------------
 
 a = time.time()
