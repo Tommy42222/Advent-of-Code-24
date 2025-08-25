@@ -39,13 +39,13 @@ def get_next_machine_input(input_content:list[str]) -> namedtuple :
     
     button_A = Values(x_values[0],y_values[0])
     button_B = Values(x_values[1],y_values[1])
-    targets = Values(x_values[2],y_values[2])
+    targets = Values(x_values[2] + 10000000000000 ,y_values[2] + 10000000000000)
 
 
     return button_A, button_B, targets, input_content
     
 
-def g(a_button:namedtuple,b_button:namedtuple,targets:namedtuple):
+def calculate_values(a_button:namedtuple,b_button:namedtuple,targets:namedtuple):
     output = 0
 
     denominator = (a_button.x_value * b_button.y_value - a_button.y_value * b_button.x_value)
@@ -62,7 +62,7 @@ def g(a_button:namedtuple,b_button:namedtuple,targets:namedtuple):
     button_A = numerator_A // denominator
     button_B = numerator_B // denominator
 
-    if 0 <= button_A <= 100 and 0 <= button_B <= 100:
+    if 0 <= button_A and 0 <= button_B:
         output = (button_A * 3) + (button_B * 1)
         print(f"{button_A = }, {button_B = }, {output = }")
     return output
