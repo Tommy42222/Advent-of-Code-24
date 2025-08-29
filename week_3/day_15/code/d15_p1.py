@@ -37,6 +37,35 @@ def parse_input(_content:list) -> tuple[list[str],str]:
 
     return area_map,instructions
 
+def generate_wider_map(area_map:list[str]) -> list[str]:
+    new_map = []
+    for row in area_map:
+        row_list:list = []
+        for item in row:
+
+            match item:
+                case "#":
+                    new_item_L = "#"
+                    new_item_R = "#"
+                case "O":
+                    new_item_L = "["
+                    new_item_R = "]" 
+                case ".":
+                    new_item_L = "."
+                    new_item_R = "." 
+                case "@":
+                    new_item_L = "@"
+                    new_item_R = "."
+                
+            row_list.append(new_item_L)
+            row_list.append(new_item_R)
+
+        new_map.append(row_list)
+
+    for row in new_map:
+        print(''.join(row))
+
+    return new_map
 
 
 def get_bot_starting_position(area_map:list) -> tuple[int,int]:
@@ -58,6 +87,7 @@ def move_bot(area_map:list[str],movement_vector:namedtuple, bot_postion:namedtup
     next_square = area_map[dy][dx]
     next_square_position = Coordinates(dy,dx)
 
+    output = "8=====* <<<"
     # print(f"{next_square = } | {bot_postion.py,bot_postion.px} ->" ,end=" ")
 
     match next_square: # main logic based on what next_sqaure is
@@ -65,7 +95,7 @@ def move_bot(area_map:list[str],movement_vector:namedtuple, bot_postion:namedtup
             output = "moving"
             bot_postion = next_square_position
 
-        case "O": # box
+        case "]" | "[" : # box
             output = "pushing box"
             area_map, bot_postion = push_box(area_map=area_map,box_location=next_square_position,robot_position=bot_postion,vectors=movement_vector)
 
@@ -114,7 +144,7 @@ def calculate_checksum(area_map:list[str]) -> int:
     checksum = 0
     for row_index, row in enumerate(area_map):
         for item_index, item in enumerate(row):
-            if item == "O":
+            if item == "[":
                 checksum += 100 * row_index + item_index
                 # print(checksum)
     return checksum
@@ -122,24 +152,29 @@ def calculate_checksum(area_map:list[str]) -> int:
 
 
 def main()-> None:
-    _content = read_file("i","15").splitlines()
-
-    # parse input 
-    area_map, instructions = parse_input(_content)
-    bot_postion:namedtuple[int,int] = get_bot_starting_position(area_map)
-
+    final_checksum = 0
+    _content = read_file("s","15").splitlines()
+ 
     # each namedtuple is formated (y-cord,x-cord)
     Vector = namedtuple("Vectors",("vy","vx"))
     direction_values: dict[str:tuple[int,int]] = {"^":Vector(-1,0), ">":Vector(0,1), "v":Vector(1,0), "<":Vector(0,-1)}
-    final_checksum = 0
 
+    # parse input 
+    area_map, instructions = parse_input(_content)
+    area_map = generate_wider_map(area_map)
+
+    # gets the coordinates to start the program from
+    bot_postion:namedtuple[int,int] = get_bot_starting_position(area_map)
+
+    
     # for each command in the instructons
-    for command in instructions:
-        directional_vector = direction_values[command]
-        area_map,bot_postion = move_bot(area_map,directional_vector,bot_postion)
-
+    for direction in instructions:
+        directional_vector = direction_values[direction]
+        area_map,bot_postion = move_bot(area_map,directional_vector,bot_postion) # main function
 
     final_checksum = calculate_checksum(area_map)
+    
+    pprint(area_map)
     print(f"{final_checksum =:,}")
 
 
