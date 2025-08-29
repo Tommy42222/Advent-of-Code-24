@@ -50,7 +50,7 @@ def get_bot_starting_position(area_map:list) -> tuple[int,int]:
 
 def move_bot(area_map:list[str],movement_vector:namedtuple, bot_postion:namedtuple) -> tuple[list[str],namedtuple]:
     Coordinates = namedtuple("Coordinates",("py","px"))
-    area_map[bot_postion.py][bot_postion.px] = "."
+    area_map[bot_postion.py][bot_postion.px] = "." # repace the robot with a "."
 
     dx = bot_postion.px + movement_vector.vx
     dy = bot_postion.py + movement_vector.vy
@@ -60,30 +60,38 @@ def move_bot(area_map:list[str],movement_vector:namedtuple, bot_postion:namedtup
 
     # print(f"{next_square = } | {bot_postion.py,bot_postion.px} ->" ,end=" ")
 
-    match next_square: 
+    match next_square: # main logic based on what next_sqaure is
         case ".": # empty space
-            print("moving")
+            output = "moving"
             bot_postion = next_square_position
 
         case "O": # box
-            print("pushing box")
+            output = "pushing box"
             area_map, bot_postion = push_box(area_map=area_map,box_location=next_square_position,robot_position=bot_postion,vectors=movement_vector)
 
         case "#": # wall
-            print("hit wall")
+            output = "hit a wall"
             pass
     
     # print(f"{bot_postion.py,bot_postion.px}")
-    area_map[bot_postion.py][bot_postion.px] = "@"
+    print(output)
+    area_map[bot_postion.py][bot_postion.px] = "@" # place the robot on the new square
     return area_map, bot_postion
 
 
 
 def push_box(area_map:list[str],box_location:namedtuple, robot_position:namedtuple, vectors:namedtuple) -> tuple[list[str],namedtuple]:
+    """
+        - This function searches outwards based on the vector 
+        - It keeps searching until it hits a "#"
+        - if it finds a "." before a "#"
+            - swap the "O" and the "." 
+            - move the robot onto the "."
+    """
     next_square = "0"
     dx = box_location.px + vectors.vx
     dy = box_location.py + vectors.vy
-    while next_square != "#":
+    while next_square != "#": 
 
         next_square = area_map[dy][dx]
         if next_square == ".":
@@ -93,10 +101,11 @@ def push_box(area_map:list[str],box_location:namedtuple, robot_position:namedtup
 
             return area_map,robot_position
 
+        # add the x,y vectors to the current squares
         dx = dx + vectors.vx
         dy = dy + vectors.vy
-    
-    print("no room to push")
+
+    # print("no room to push")
     return area_map,robot_position
 
 
@@ -124,6 +133,7 @@ def main()-> None:
     direction_values: dict[str:tuple[int,int]] = {"^":Vector(-1,0), ">":Vector(0,1), "v":Vector(1,0), "<":Vector(0,-1)}
     final_checksum = 0
 
+    # for each command in the instructons
     for command in instructions:
         directional_vector = direction_values[command]
         area_map,bot_postion = move_bot(area_map,directional_vector,bot_postion)
@@ -133,9 +143,8 @@ def main()-> None:
     print(f"{final_checksum =:,}")
 
 
-
 if __name__ == "__main__":
-    s = time.time()
-    main()
-    f = time.time()
-    print(f"TOTAL RUN TIME = {f-s:.3f}s")
+    s = time.time() # timer start
+    main() 
+    f = time.time() # timer end
+    print(f"TOTAL RUN TIME = {f-s:.3f}s") # prints total run time in seconds
