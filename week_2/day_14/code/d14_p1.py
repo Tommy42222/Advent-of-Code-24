@@ -31,7 +31,7 @@ def get_position_and_velocity(_input:str) -> dict[tuple[int,int]]:
 
         position = Position(row_matches[0],row_matches[1])
         velocity = Velocity(row_matches[2],row_matches[3])
-        # print(position,velocity)
+        print(position,velocity)
     
         robots[id] = (position,velocity)
     # pprint(robots)
