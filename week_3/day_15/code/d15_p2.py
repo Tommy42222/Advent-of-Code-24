@@ -48,6 +48,7 @@ def generate_wider_map(area_map:list[str]) -> list[str]:
                     new_item_L = "#"
                     new_item_R = "#"
                 case "O":
+                    new_item_L = "["
                     new_item_R = "]" 
                 case ".":
                     new_item_L = "."
@@ -95,8 +96,19 @@ def move_bot(area_map:list[str],movement_vector:namedtuple, bot_postion:namedtup
             bot_postion = next_square_position
 
         case "]" | "[" : # box
+            bool_value = False
             output = "pushing box"
-            area_map, bot_postion = push_box(area_map=area_map,box_location=next_square_position,robot_position=bot_postion,vectors=movement_vector)
+            box_chain_corrdinates = []
+            print(next_square_position)
+
+            if movement_vector.vy != 0:
+                print("verticaly")
+                bool_value ,box_chain_corrdinates = push_box_verticaly(area_map=area_map,box_location=next_square_position,box_token=next_square,vectors=movement_vector,box_chain_corrdinates=box_chain_corrdinates)
+            else:
+                print("horizontaly")
+                bool_value, box_chain_corrdinates = push_box_horizontally(area_map=area_map,box_location=next_square_position,box_token=next_square,vectors=movement_vector,box_chain_corrdinates=box_chain_corrdinates)
+
+            print(bool_value,box_chain_corrdinates)
 
         case "#": # wall
             output = "hit a wall"
@@ -109,33 +121,76 @@ def move_bot(area_map:list[str],movement_vector:namedtuple, bot_postion:namedtup
 
 
 
-def push_box(area_map:list[str],box_location:namedtuple, robot_position:namedtuple, vectors:namedtuple) -> tuple[list[str],namedtuple]:
-    """
-        - This function searches outwards based on the vector 
-        - It keeps searching until it hits a "#"
-        - if it finds a "." before a "#"
-            - swap the "O" and the "." 
-            - move the robot onto the "."
-    """
-    next_square = "0"
-    dx = box_location.px + vectors.vx
-    dy = box_location.py + vectors.vy
-    while next_square != "#": 
+def push_box_verticaly(area_map:list[str],box_location:namedtuple,box_token:str, vectors:namedtuple,box_chain_corrdinates:list) -> tuple[bool,list[tuple[int,int]]]:
+    Coordinates = namedtuple("Coordinates",("py","px"))
 
-        next_square = area_map[dy][dx]
-        if next_square == ".":
+    print(f"{box_token = }")
 
-            area_map[dy][dx],area_map[box_location.py][box_location.px] = area_map[box_location.py][box_location.px],area_map[dy][dx]
-            robot_position = box_location
+    if box_location in box_chain_corrdinates:
+        return True, box_chain_corrdinates
 
-            return area_map,robot_position
+    if box_token == "]":
+        l_check = Coordinates(box_location.py + vectors.vy,box_location.px - 1)
+        r_check = Coordinates(box_location.py + vectors.vy,box_location.px)
+        box_chain_corrdinates.append([(box_location.py,box_location.px),(box_location.py,box_location.px -1)])
 
-        # add the x,y vectors to the current squares
-        dx = dx + vectors.vx
-        dy = dy + vectors.vy
 
-    # print("no room to push")
-    return area_map,robot_position
+    elif box_token == "[":
+        l_check = Coordinates(box_location.py + vectors.vy,box_location.px)
+        r_check = Coordinates(box_location.py + vectors.vy, box_location.px + 1)
+        box_chain_corrdinates.append([(box_location.py,box_location.px),(box_location.py,box_location.px + 1)])
+
+
+    elif box_token == ".":
+        return True, box_chain_corrdinates
+    
+    else:
+        print("somethings has gone fucking WRONG")
+
+
+    l_check_sqaure = area_map[l_check.py][l_check.px]
+    r_check_square = area_map[r_check.py][r_check.px]
+    
+    if l_check_sqaure == "[" and r_check_square == "]":
+        output_bool,box_chain_corrdinates = push_box_verticaly(area_map=area_map,box_location=l_check,box_token=l_check_sqaure,vectors=vectors,box_chain_corrdinates=box_chain_corrdinates)
+
+    elif l_check_sqaure == "." and r_check_square == ".":
+        return True, box_chain_corrdinates
+    
+    elif l_check_sqaure == "#" or r_check_square == "#":
+        return False,box_chain_corrdinates
+
+    elif l_check_sqaure == "]" or r_check_square == "[":
+            output_a,box_chain_corrdinates = push_box_verticaly(area_map=area_map,box_location=l_check,box_token=l_check_sqaure,vectors=vectors,box_chain_corrdinates=box_chain_corrdinates)
+            output_b,box_chain_corrdinates = push_box_verticaly(area_map=area_map,box_location=r_check,box_token=r_check_square,vectors=vectors,box_chain_corrdinates=box_chain_corrdinates)
+            
+            if output_a == False or output_b == False:
+                return False, box_chain_corrdinates 
+            else:
+                return True, box_chain_corrdinates
+    
+
+    return output_bool, box_chain_corrdinates
+
+
+
+def push_box_horizontally(area_map:list[str],box_location:namedtuple,box_token, vectors:namedtuple, box_chain_corrdinates:list) -> tuple[bool,list[tuple[int,int]]]:
+    Coordinates = namedtuple("Coordinates",("py","px"))
+
+    current_square = box_token
+    dx = box_location.px
+    dy = box_location.py
+
+    while current_square != "#":
+        box_chain_corrdinates.append((Coordinates(dy,dx),Coordinates(dy,dx + vectors.vx)))
+        
+        dx = dx + (vectors.vx * 2)
+
+        current_square = area_map[dy][dx]
+        if current_square == ".":
+            return True, box_chain_corrdinates
+    
+    return False, box_chain_corrdinates
 
 
 
@@ -160,7 +215,7 @@ def main()-> None:
 
     # parse input 
     area_map, instructions = parse_input(_content)
-    area_map = generate_wider_map(area_map)
+    # area_map = generate_wider_map(area_map)
 
     # gets the coordinates to start the program from
     bot_postion:namedtuple[int,int] = get_bot_starting_position(area_map)
