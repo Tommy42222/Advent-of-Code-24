@@ -1,6 +1,7 @@
 import os,time
 from pprint import pprint
 from collections import namedtuple
+from itertools import chain
 
 
 
@@ -37,6 +38,10 @@ def parse_input(_content:list) -> tuple[list[str],str]:
 
     return area_map,instructions
 
+def print_area_map(area_map:str, seperator:str):
+    for row in area_map:
+        print(seperator.join(row))
+
 def generate_wider_map(area_map:list[str]) -> list[str]:
     new_map = []
     for row in area_map:
@@ -62,8 +67,7 @@ def generate_wider_map(area_map:list[str]) -> list[str]:
 
         new_map.append(row_list)
 
-    for row in new_map:
-        print(''.join(row))
+
 
     return new_map
 
@@ -95,27 +99,33 @@ def move_bot(area_map:list[str],movement_vector:namedtuple, bot_postion:namedtup
             output = "moving"
             bot_postion = next_square_position
 
+
         case "]" | "[" : # box
-            bool_value = False
+            can_be_pushed:bool = None
             output = "pushing box"
             box_chain_corrdinates = []
-            print(next_square_position)
 
             if movement_vector.vy != 0:
-                print("verticaly")
-                bool_value ,box_chain_corrdinates = push_box_verticaly(area_map=area_map,box_location=next_square_position,box_token=next_square,vectors=movement_vector,box_chain_corrdinates=box_chain_corrdinates)
-            else:
-                print("horizontaly")
-                bool_value, box_chain_corrdinates = push_box_horizontally(area_map=area_map,box_location=next_square_position,box_token=next_square,vectors=movement_vector,box_chain_corrdinates=box_chain_corrdinates)
+                output = "verticaly"
+                can_be_pushed ,box_chain_corrdinates = push_box_verticaly(area_map=area_map,box_location=next_square_position,box_token=next_square,vectors=movement_vector,box_chain_corrdinates=box_chain_corrdinates)
 
-            print(bool_value,box_chain_corrdinates)
+                if can_be_pushed == True:
+                    area_map,bot_postion = update_boxes(area_map=area_map,box_chain_corrdinates=box_chain_corrdinates,vectors=movement_vector,robot_position=bot_postion)
+            
+            else:
+                output = "horizontaly"
+                can_be_pushed, box_chain_corrdinates = push_box_horizontally(area_map=area_map,box_location=next_square_position,box_token=next_square,vectors=movement_vector,box_chain_corrdinates=box_chain_corrdinates)
+
+                if can_be_pushed == True:
+                    area_map,bot_postion = update_boxes(area_map=area_map,box_chain_corrdinates=box_chain_corrdinates,vectors=movement_vector,robot_position=bot_postion)
+
 
         case "#": # wall
             output = "hit a wall"
             pass
     
     # print(f"{bot_postion.py,bot_postion.px}")
-    print(output)
+    # print(output)
     area_map[bot_postion.py][bot_postion.px] = "@" # place the robot on the new square
     return area_map, bot_postion
 
@@ -123,10 +133,10 @@ def move_bot(area_map:list[str],movement_vector:namedtuple, bot_postion:namedtup
 
 def push_box_verticaly(area_map:list[str],box_location:namedtuple,box_token:str, vectors:namedtuple,box_chain_corrdinates:list) -> tuple[bool,list[tuple[int,int]]]:
     Coordinates = namedtuple("Coordinates",("py","px"))
+    temp = set(chain(*chain(i for i in box_chain_corrdinates)))
+    # print(f"{box_token = }")
 
-    print(f"{box_token = }")
-
-    if box_location in box_chain_corrdinates:
+    if ((box_location.py,box_location.px) in temp) or ((box_location.px,box_location.py) in box_chain_corrdinates):
         return True, box_chain_corrdinates
 
     if box_token == "]":
@@ -174,7 +184,7 @@ def push_box_verticaly(area_map:list[str],box_location:namedtuple,box_token:str,
 
 
 
-def push_box_horizontally(area_map:list[str],box_location:namedtuple,box_token, vectors:namedtuple, box_chain_corrdinates:list) -> tuple[bool,list[tuple[int,int]]]:
+def push_box_horizontally(area_map:list[str],box_location:namedtuple,box_token:str, vectors:namedtuple, box_chain_corrdinates:list) -> tuple[bool,list[tuple[int,int]]]:
     Coordinates = namedtuple("Coordinates",("py","px"))
 
     current_square = box_token
@@ -193,6 +203,29 @@ def push_box_horizontally(area_map:list[str],box_location:namedtuple,box_token, 
     return False, box_chain_corrdinates
 
 
+def update_boxes(area_map:list[str],box_chain_corrdinates:list[tuple[int,int],tuple[int,int]],vectors:namedtuple,robot_position:namedtuple):
+    Coordinates = namedtuple("Coordinates",("py","px"))
+    # clear the boxes off the grid
+    for box in box_chain_corrdinates:
+        for sub_box in box:
+            y = sub_box[0]
+            x = sub_box[1]
+            area_map[y][x] = "."
+    # add the moved boxes to the grid
+    for new_box in box_chain_corrdinates:
+        boxes = ["[","]"]
+        if new_box[0][1] > new_box[1][1]:
+            boxes = ["]","["]
+
+        for id, sub_box in enumerate(new_box):
+            y = sub_box[0]
+            x = sub_box[1]
+            area_map[y+vectors.vy][x+vectors.vx] = boxes[id]
+
+    new_robot_position = Coordinates(robot_position.py + vectors.vy,robot_position.px+ vectors.vx)
+    return area_map, new_robot_position
+
+
 
 def calculate_checksum(area_map:list[str]) -> int:
     checksum = 0
@@ -207,7 +240,7 @@ def calculate_checksum(area_map:list[str]) -> int:
 
 def main()-> None:
     final_checksum = 0
-    _content = read_file("s","15").splitlines()
+    _content = read_file("i","15").splitlines()
  
     # each namedtuple is formated (y-cord,x-cord)
     Vector = namedtuple("Vectors",("vy","vx"))
@@ -215,7 +248,8 @@ def main()-> None:
 
     # parse input 
     area_map, instructions = parse_input(_content)
-    # area_map = generate_wider_map(area_map)
+    area_map = generate_wider_map(area_map)
+    print_area_map(area_map,"")
 
     # gets the coordinates to start the program from
     bot_postion:namedtuple[int,int] = get_bot_starting_position(area_map)
@@ -225,10 +259,10 @@ def main()-> None:
     for direction in instructions:
         directional_vector = direction_values[direction]
         area_map,bot_postion = move_bot(area_map,directional_vector,bot_postion) # main function
+        print(direction, end=" ")
 
     final_checksum = calculate_checksum(area_map)
-    
-    pprint(area_map)
+    print_area_map(area_map,"")
     print(f"{final_checksum =:,}")
 
 
